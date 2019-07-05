@@ -1,0 +1,50 @@
+{
+  "name": "omni.models",
+  "version": "0.0.1",
+  "description": "OmniRules Models",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "mocha -r ts-node/register test/test.*.ts --reporter mochawesome --reporter-options reportDir=public/test-results,reportFilename=index",
+    "publish npm": "npm --no-git-tag-version version patch; cd dist; npm publish",
+    "cleanup": "rm -Rf dist; mkdir dist; cd dist; ln -s ../package.json"
+  },
+  "keywords": [],
+  "author": "Herman Geldenhuys",
+  "license": "Agileworks Community",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hgeldenhuys/omni.models"
+  },
+  "homepage": "https://www.agileworks.co.za/agileworks-community-license",
+  "dependencies": {
+    "@types/acorn": "^4.0.5",
+    "@types/node": "^12.0.10",
+    "@types/terser": "^3.12.0",
+    "acorn": "^6.1.1",
+    "acorn-globals": "^4.3.2",
+    "axios": "^0.19.0",
+    "babylon": "^7.0.0-beta.47",
+    "butternut": "^0.4.6",
+    "dts-gen": "^0.5.8",
+    "md5-hex": "^3.0.0",
+    "omni.interfaces": "^0.0.6",
+    "recast": "^0.18.1",
+    "terser": "^4.0.0",
+    "typescript": "^3.5.1",
+    "typescript-parser": "^2.6.1",
+    "uglify-es": "^3.3.9"
+  },
+  "devDependencies": {
+    "mocha": "^6.1.4",
+    "mochawesome": "^4.0.0",
+    "@types/chai": "^4.1.7",
+    "@types/expect": "^1.20.4",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "nyc": "^14.1.1",
+    "ts-mocha": "^6.0.0",
+    "ts-node": "^8.3.0"
+  }
+}
