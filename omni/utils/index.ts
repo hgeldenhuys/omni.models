@@ -58,15 +58,15 @@ export const addValueToJsonPath = (json: any, path: string, defaultValue: any, r
                 throw e;
             }
             json = json[path];
-        }
-        else {
+            child = path;
+        } else {
             if (parentNode[child][0] === undefined) {
-                parentNode[child] = [{}];
+                parentNode[child] = [];
             }
-            json = parentNode[child][0];
+            json = parentNode[child];
             parentNode = json;
+            child = json.length;
         }
-        child = path;
     });
     if (defaultValue !== undefined) {
         parentNode[child] = defaultValue;
@@ -165,7 +165,8 @@ export const extractUndeclaredVarsFromCode = (code: string): string[] => {
             'window',
             'document',
             'theResult',
-            'theResultIs'
+            'theResultIs',
+            'rule'
         ].indexOf(scope.name) === -1) // Exclude globals
         .map((scope: any) => {
             return scope.name as string;
@@ -208,11 +209,22 @@ export const getValueForPath = (root: {}, paths: string[]) => {
     return undefined;
 };
 
-
-//
-//
-// const project = new Project({ compilerOptions: { outDir: "dist", declaration: true } });
-// project.createSourceFile("MyFile.ts", "const num = 1;");
-//
-// // or
-// console.log(project.emitSync());
+export function guessTypeOf(value: any): "date" | "string" | "boolean" | "number" | "object" | "array" | "bigint" {
+    const type = typeof value;
+    if (value && (typeof value.getMonth === "function")) {
+        return "date";
+    } else if (type === "object") {
+        return Array.isArray(value) ? "array" : "object";
+    } else if ((type === "symbol") || (type === "undefined") || (type === "function")) {
+        throw `Cannot guess type of ${type}`;
+    } else if (type === "string") {
+        if ( ((value.indexOf('-') > -1) || (value.indexOf('/') > -1)) &&
+            !isNaN(Date.parse(value))) {
+            return "date";
+        } else{
+            return "string";
+        }
+    } else {
+        return type;
+    }
+}

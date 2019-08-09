@@ -9,6 +9,24 @@ const md5Hex = require('md5-hex');
 
 export const ROOT_NAME = "bom";
 
+function getRuleStructure(fact: Fact, rule: Rule, ruleIsArray: boolean) {
+    let code = rule.getRule();
+    const vars = extractUndeclaredVarsFromCode(code);
+    vars.forEach((name) => {
+        const factName = new RegExp(name + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)", "gi"); // Don't escape names between double quotes
+        code = code.replace(factName, `${ROOT_NAME}.${fact.getPath(name)}`);
+    });
+    return {
+        name: (fact.path || rule.name) + (ruleIsArray ? "[]" : ""),
+        code: code,
+        ruleCode: rule.name,
+        behaviour: rule.behaviour,
+        absolute: undefined,
+        variables: rule.expectedFacts(),
+        enumerations: fact.enumerations
+    };
+}
+
 export default class Aggregate implements AggregateInterface {
     public id: number | undefined;
     public decisionObjectType?: DecisionObjectType;
@@ -29,29 +47,22 @@ export default class Aggregate implements AggregateInterface {
     }
 
     getOutputs() {
-        return this.facts.filter(fact => fact.rule && fact.rule.statedAs);
+        return this.facts.filter(fact => fact.rule || fact.rules);
     }
 
     getRules() {
-        const result = this.getOutputs()
-            .filter(fact => fact.rule)
-            .map((fact): RuleStructureInterface => {
-                let rule = fact.rule as Rule;
-                let code = rule.getRule();
-                const vars = extractUndeclaredVarsFromCode(code);
-                vars.forEach((name) => {
-                    const factName = new RegExp(name, "gi");
-                    code = code.replace(factName, `${ROOT_NAME}.${fact.getPath(name)}`);
-                });
-                return {
-                    name: fact.path || rule.name,
-                    code: code,
-                    behaviour: "Normal",
-                    absolute: undefined,
-                    variables: rule.expectedFacts()
+        const outputs = this.getOutputs()
+            .filter(fact => fact.rule || fact.rules),
+            rules: RuleStructureInterface[] = [];
+        outputs
+            .forEach((fact): void => {
+                if (fact.rule) {
+                    rules.push(getRuleStructure(fact, fact.rule, false));
+                } else if (fact.rules) {
+                    fact.rules.forEach(rule => rules.push(getRuleStructure(fact, rule, true)));
                 }
             });
-        return result;
+        return rules;
     }
 
     schemaVersion() {
@@ -97,7 +108,7 @@ export default class Aggregate implements AggregateInterface {
                 addValueToJsonPath(sampleBom, path, value);
             } else if (fact.rule === undefined) {
                 if (fact.dataType === "string") {
-                    addValueToJsonPath(sampleBom, path, "SampleValue");
+                    addValueToJsonPath(sampleBom, path, fact.sampleValue);
                 } else if ((fact.dataType === "number")) {
                     addValueToJsonPath(sampleBom, path, 10);
                 } else if (fact.dataType === "date") {

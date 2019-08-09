@@ -91,3 +91,69 @@ describe(`The generated rule`, () => {
         expect(fact.rule && fact.rule.getRule()).to.equal(`theResultIs("Hermanus");`);
     });
 });
+
+describe(`Guess a data type`, () => {
+    it(`should return a number`, () => {
+        const fact = new Fact({
+            sampleValue: 10
+        });
+        expect(fact.dataType).to.equal("number");
+    });
+});
+
+describe(`Guess a data type`, () => {
+    it(`should return a string`, () => {
+        const fact = new Fact({
+            sampleValue: "Hello"
+        });
+        expect(fact.dataType).to.equal("string");
+    });
+});
+
+describe(`Guess a data type`, () => {
+    it(`should return a string`, () => {
+        const fact = new Fact({
+            sampleValue: false
+        });
+        expect(fact.dataType).to.equal("boolean");
+    });
+});
+
+describe(`Guess a data type`, () => {
+    it(`should return a date`, () => {
+        const fact = new Fact({
+            sampleValue: new Date()
+        });
+        expect(fact.dataType).to.equal("date");
+    });
+});
+
+describe(`Fact with path of "Person.Name" without name`, () => {
+    it(`should create name of PersonName`, () => {
+        const fact = new Fact({
+            path: "Person.Name"
+        });
+        expect(fact.name).to.equal("PersonName");
+    });
+});
+
+describe(`Fact with name of "PersonName" without path`, () => {
+    it(`should create path of Person.Name`, () => {
+        const fact = new Fact({
+            path: "Person.Name"
+        });
+        expect(fact.path).to.equal("Person.Name");
+    });
+});
+
+describe(`Fact without name or path should get path from rule with name of "PersonName"`, () => {
+    it(`should create path of Person.Name and name of PersonName`, () => {
+        const fact = new Fact({
+            rule: {
+                name: "PersonName"
+            }
+        });
+        expect(fact.path).to.equal("PersonName");
+        expect(fact.name).to.equal("PersonName");
+    });
+});

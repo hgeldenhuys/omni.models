@@ -1,5 +1,5 @@
 import {Factory, IdentifierInterface, RuleInterface} from "omni.interfaces";
-import {DataType} from "omni.interfaces/types";
+import {DataType, RuleBehaviour} from "omni.interfaces/types";
 import {assert, extractUndeclaredVarsFromCode, formatCode} from "../utils";
 
 export class Rule implements RuleInterface {
@@ -11,10 +11,8 @@ export class Rule implements RuleInterface {
     public sampleValue: string | undefined;
     public statedAs: string | undefined;
     public dataType: DataType;
+    public behaviour: RuleBehaviour | undefined;
     public type: "Rule" = "Rule";
-    public static new(ruleInterface: IdentifierInterface | RuleInterface): Rule {
-        return new Rule(Factory.rule(ruleInterface));
-    }
     constructor(ruleInterface: RuleInterface) {
         this.id = ruleInterface.id;
         this.name = ruleInterface.name;
@@ -24,6 +22,7 @@ export class Rule implements RuleInterface {
         this.aliases = ruleInterface.aliases;
         this.dataType = ruleInterface.dataType || "string";
         this.sampleValue = ruleInterface.sampleValue;
+        this.behaviour = ruleInterface.behaviour || "Normal";
     }
     public expectedFacts() {
         if (this.statedAs !== undefined) {

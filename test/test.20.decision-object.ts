@@ -105,7 +105,8 @@ describe(`Sample Json`, () => {
                         "name": "StringDate",
                         "description": "Takes date and outputs a string formatted date",
                         "statedAs": "theResultIs(new Date(DateTime).toLocaleString())",
-                        "dataType": "string"
+                        "dataType": "string",
+                        behaviour: "Always"
                     },
                     "pathMapping": [
                         {

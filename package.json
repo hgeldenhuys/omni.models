@@ -1,6 +1,6 @@
 {
   "name": "omni.models",
-  "version": "0.0.1",
+  "version": "0.0.22",
   "description": "OmniRules Models",
   "main": "index.js",
   "types": "index.d.ts",
@@ -29,7 +29,7 @@
     "butternut": "^0.4.6",
     "dts-gen": "^0.5.8",
     "md5-hex": "^3.0.0",
-    "omni.interfaces": "^0.0.6",
+    "omni.interfaces": "^0.0.17",
     "recast": "^0.18.1",
     "terser": "^4.0.0",
     "typescript": "^3.5.1",
